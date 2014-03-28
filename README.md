@@ -11,7 +11,7 @@ cd WEB_ROOT_DIR/addons/plugins/
 
 Clone the Conversation Status plugin repo into the plugin directory:
 ```
-git clone git@github.com:esoTalk-plugin/ConversationStatus.git ConversationStatus
+git clone git@github.com:esoTalk-plugins/ConversationStatus.git ConversationStatus
 ```
 
 Chown the Conversation Status plugin folder to the right web user:
