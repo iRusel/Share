@@ -7,9 +7,9 @@ ET::$pluginInfo["ConversationStatus"] = array(
 	"name" => "Conversation Status",
 	"description" => "Allow those who can moderate to set a status to conversations.",
 	"version" => "0.5",
-	"author" => "Shaun Merchant, Tristan van Bokkem",
-	"authorEmail" => "tristanvanbokem@gmail.com",
-	"authorURL" => "http://www.bitcoinclub.nl",
+	"author" => "Shaun Merchant",
+	"authorEmail" => "shaun@gravitygrip.co.uk ",
+	"authorURL" => "http://www.gravitygrip.co.uk/",
 	"license" => "GPLv2"
 );
 
