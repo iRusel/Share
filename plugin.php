@@ -1,140 +1,35 @@
 <?php
-// Copyright 2014 Shaun Merchant, Tristan van Bokkem
+// Copyright 2014 Tristan van Bokkem
 
 if (!defined("IN_ESOTALK")) exit;
 
-ET::$pluginInfo["ConversationStatus"] = array(
-	"name" => "Conversation Status",
-	"description" => "Allow those who can moderate to set a status to conversations.",
-	"version" => "0.5",
-	"author" => "Shaun Merchant",
-	"authorEmail" => "shaun@gravitygrip.co.uk ",
-	"authorURL" => "http://www.gravitygrip.co.uk/",
+ET::$pluginInfo["Share"] = array(
+	"name" => "Share",
+	"description" => "Share conversations with Facebook, Twitter and Google+.",
+	"version" => "1.0.0",
+	"author" => "Tristan van Bokkem",
+	"authorEmail" => "tristanvanbokkem@gmail.com",
+	"authorURL" => "http://www.bitcoinclub.nl",
 	"license" => "GPLv2"
 );
 
-class ETPlugin_ConversationStatus extends ETPlugin {	
-	
-	public function setup($oldVersion = "") {
-		$structure = ET::$database->structure();
-		$structure->table("conversation")
-			->column("status", "int(11) unsigned")
-			->exec(false);
+class ETPlugin_Share extends ETPlugin {	
 
-		return true;
-	}
-
-	public function init() {
-		ET::conversationModel();
-		ETConversationModel::addLabel("none", "IF(c.status = NULL,1,0)");
-		ETConversationModel::addLabel("added", "IF(c.status = 1,1,0)", "icon-check");
-		ETConversationModel::addLabel("considered", "IF(c.status = 2,1,0)","icon-question-sign");
-		ETConversationModel::addLabel("rejected", "IF(c.status = 3,1,0)","icon-thumbs-down");
-		ETConversationModel::addLabel("fixed", "IF(c.status = 4,1,0)","icon-cogs");
-		ETConversationModel::addLabel("inprogress", "IF(c.status = 5,1,0)","icon-wrench");
-		ETConversationModel::addLabel("nobug", "IF(c.status = 6,1,0)","icon-thumbs-up");
-		ETConversationModel::addLabel("highpriority", "IF(c.status = 7,1,0)","icon-circle");
-		ETConversationModel::addLabel("lowpriority", "IF(c.status = 8,1,0)","icon-circle-blank");
-
-		/*ET::define("label.none", "");
-		ET::define("label.added", "Lisatud");
-		ET::define("label.considered", "Kaalumisel");
-		ET::define("label.rejected", "Mõtetu");
-		ET::define("label.fixed", "Korras");
-		ET::define("label.inprogress", "Töös");
-		ET::define("label.notbug", "Parandatud");
-		ET::define("label.highpriority", "Väga tähtis");
-		ET::define("label.lowpriority", "Oluline");*/
-	}
 
 	public function handler_renderBefore($sender) {
-		$sender->addCSSFile($this->getResource("status.css"));
-		$sender->addJSFile($this->getResource("status.js"));
-		$sender->addJSLanguage("Status");
+		$sender->addJSFile($this->getResource("share.js"));
+		$sender->addJSLanguage("Share");
 	}
 	
 	public function handler_conversationController_renderScrubberBefore($sender, $data) {
 		if(!ET::$session->user) return;
-		if($data["conversation"]["canModerate"]) {
-			$status = array(
-				0 => T("None"),
-				1 => T("Added"),
-				2 => T("Considered"),
-				3 => T("Rejected"),
-				4 => T("Fixed"),
-				5 => T("In Progress"),
-				6 => T("No Bug"),
-				7 => T("High Priority"),
-				8 => T("Low Priorty")
-			);
-			$status_icons = array(
-				0 => "warning-sign",
-				1 => "check",
-				2 => "question-sign",
-				3 => "thumbs-down",
-				5 => "wrench",
-				4 => "cogs",
-				6 => "thumbs-up",
-				7 => "circle",
-				8 => "circle-blank"
-			);
-			$status_seperators = array(
-				0 => true,
-				3 => true,
-				6 => true
-			);
-			$max = sizeof($status);
-			$controls = "<ul id='conversationStatusControls' class='statuscontrols'>";
-			for($i = 0; $i < $max; $i++) {
-				$controls = $controls . "<li><a href='". URL("conversation/status/". $data["conversation"]["conversationId"] .
-											"?status=". $i .
-											"&token=". ET::$session->token .
-											"&return=". urlencode(ET::$controller->selfURL)) .
-											"' title='". T($status[$i]) ."'>
-									<i class='icon-". $status_icons[$i] ."'></i> 
-									<span>". $status[$i] . "</span>
-								</a></li>";
-				//if($status_seperators[$i] === true) {
-				//	$controls = $controls . "<li class='sep'></li>";	
-				//}
-			}
-			echo $controls . "</ul>";
-		} else {
-			return;	
-		}
-	}
-	
-	public function conversationController_status($sender, $conversationId) {
-		if (!$sender->validateToken()) return;
-	
-		$conversation = ET::conversationModel()->getById((int)$conversationId);
-														  
-		if(!$conversation || !$conversation["canModerate"]) {
-			$sender->renderMessage(T("Error"), T("message.noPermission"));
-			return false;
-		}
+		$controls = "<ul id='shareControls'>
+						<li><a href='https://www.facebook.com/sharer/sharer.php?u=".URL(conversationURL($data["conversation"]["conversationId"], $data["conversation"]["title"]), true)."' target='_blank'><i class='icon-facebook'></i><span>".T("Share on")." Facebook</span></a></li>
+						<li><a href='https://twitter.com/share?text=".$data["conversation"]["title"]."&url=".URL(conversationURL($data["conversation"]["conversationId"], $data["conversation"]["title"]), true)."' target='_blank'><i class='icon-twitter'></i><span>".T("Share on")." Twitter</span></a></li>
+						<li><a href='https://plus.google.com/share?url=".URL(conversationURL($data["conversation"]["conversationId"], $data["conversation"]["title"]), true)."' target='_blank'><i class='icon-google-plus'></i><span>".T("Share on")." Google</span></a></li>						
+					</ul>";
 
-		$model = ET::conversationModel();
-		$model->updateById($conversationId, array("status" => $_GET["status"]));
-
-		redirect(URL(R("return", conversationURL ($conversationId))));
-	}
-
-	function setistaatust(&$conversation, $memberId, $unfinished)
-	{
-		$unfinished = (bool)$unfinished;
-		$model = ET::conversationModel();
-		$model->setStatus($conversation["conversationId"], $memberId, array("unfinished" => $unfinished));	#conversationModel
-		$model->addOrRemoveLabel($conversation, "unfinished", $unfinished);					#conversationModel
-		$conversation["unfinished"] = $unfinished;
-	}
-
-	function addOrRemoveLabel(&$conversation, $label, $add = true)
-	{
-        	if ($add and !in_array($label, $conversation["labels"]))
-                	$conversation["labels"][] = $label;
-        	elseif (!$add and ($k = array_search($label, $conversation["labels"])) !== false)
-                	unset($conversation["labels"][$k]);
+		echo $controls;
 	}
 
 }

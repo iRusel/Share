@@ -1,6 +1,6 @@
-## esoTalk – Conversation Status plugin
+## esoTalk – Share plugin
 
-- Allow those who can moderate to set a status to conversations.
+- Share conversations with Facebook, Twitter and Google+.
 
 ### Installation
 
@@ -9,12 +9,21 @@ Browse to your esoTalk plugin directory:
 cd WEB_ROOT_DIR/addons/plugins/
 ```
 
-Clone the Conversation Status plugin repo into the plugin directory:
+Clone the Share plugin repo into the plugin directory:
 ```
-git clone git@github.com:esoTalk-plugins/ConversationStatus.git ConversationStatus
+git clone git@github.com:esoTalk-plugins/Share.git Share
 ```
 
-Chown the Conversation Status plugin folder to the right web user:
+Chown the Share plugin folder to the right web user:
 ```
-chown -R apache:apache ConversationStatus/
+chown -R apache:apache Share/
+```
+
+### Translation
+
+Add the following definitions to your translation file (or create a seperate definitions.Share.php file):
+
+```
+$definitions["Share"] = "Share";
+$definitions["Share on"] = "Share on";
 ```
