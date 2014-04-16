@@ -13,20 +13,21 @@ ET::$pluginInfo["Share"] = array(
 	"license" => "GPLv2"
 );
 
-class ETPlugin_Share extends ETPlugin {	
+class ETPlugin_Share extends ETPlugin {
 
 
 	public function handler_renderBefore($sender) {
+		$sender->addCSSFile($this->getResource("share.css"));
 		$sender->addJSFile($this->getResource("share.js"));
 		$sender->addJSLanguage("Share");
 	}
-	
+
 	public function handler_conversationController_renderScrubberBefore($sender, $data) {
 		if(!ET::$session->user) return;
 		$controls = "<ul id='shareControls'>
 						<li><a href='https://www.facebook.com/sharer/sharer.php?u=".URL(conversationURL($data["conversation"]["conversationId"], $data["conversation"]["title"]), true)."' target='_blank'><i class='icon-facebook'></i><span>".T("Share on")." Facebook</span></a></li>
 						<li><a href='https://twitter.com/share?text=".$data["conversation"]["title"]."&url=".URL(conversationURL($data["conversation"]["conversationId"], $data["conversation"]["title"]), true)."' target='_blank'><i class='icon-twitter'></i><span>".T("Share on")." Twitter</span></a></li>
-						<li><a href='https://plus.google.com/share?url=".URL(conversationURL($data["conversation"]["conversationId"], $data["conversation"]["title"]), true)."' target='_blank'><i class='icon-google-plus'></i><span>".T("Share on")." Google</span></a></li>						
+						<li><a href='https://plus.google.com/share?url=".URL(conversationURL($data["conversation"]["conversationId"], $data["conversation"]["title"]), true)."' target='_blank'><i class='icon-google-plus'></i><span>".T("Share on")." Google</span></a></li>
 					</ul>";
 
 		echo $controls;
