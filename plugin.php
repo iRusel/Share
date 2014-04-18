@@ -16,7 +16,7 @@ ET::$pluginInfo["Share"] = array(
 class ETPlugin_Share extends ETPlugin {
 
 
-	public function handler_renderBefore($sender) {
+	public function handler_conversationController_renderBefore($sender) {
 		$sender->addCSSFile($this->getResource("share.css"));
 		$sender->addJSFile($this->getResource("share.js"));
 		$sender->addJSLanguage("Share");
