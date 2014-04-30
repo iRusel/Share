@@ -6,7 +6,7 @@ if (!defined("IN_ESOTALK")) exit;
 ET::$pluginInfo["Share"] = array(
 	"name" => "Share",
 	"description" => "Share conversations with Facebook, Twitter and Google+.",
-	"version" => "1.0.1",
+	"version" => "1.1.0",
 	"author" => "Tristan van Bokkem",
 	"authorEmail" => "tristanvanbokkem@gmail.com",
 	"authorURL" => "http://www.bitcoinclub.nl",
@@ -18,8 +18,8 @@ class ETPlugin_Share extends ETPlugin {
 	// Add the Share controls CSS/JS to the conversation view.
 	public function handler_conversationController_renderBefore($sender)
 	{
-		$sender->addCSSFile($this->getResource("share.css"));
-		$sender->addJSFile($this->getResource("share.js"));
+		$sender->addCSSFile($this->resource("share.css"));
+		$sender->addJSFile($this->resource("share.js"));
 		$sender->addJSLanguage("Share");
 	}
 
