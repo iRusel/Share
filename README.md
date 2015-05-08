@@ -11,7 +11,7 @@ cd WEB_ROOT_DIR/addons/plugins/
 
 Clone the Share plugin repo into the plugin directory:
 ```
-git clone git@github.com:esoTalk-plugins/Share.git Share
+git clone git@github.com:tvb/Share.git Share
 ```
 
 Chown the Share plugin folder to the right web user:
